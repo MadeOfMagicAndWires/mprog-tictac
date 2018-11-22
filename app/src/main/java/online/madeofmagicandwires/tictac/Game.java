@@ -1,15 +1,20 @@
 package online.madeofmagicandwires.tictac;
 
-import java.util.Arrays;
+
+import android.util.SparseIntArray;
+
+import java.io.Serializable;
+import java.util.HashMap;
 
 
+public class Game implements Serializable {
 
-public class Game {
     final private int DEFAULT_BOARD_SIZE = 3;
 
     public final int boardSize;
     private TileState[][] board;
     private int movesPlayed;
+    private int[] wins;
     private GameState gameOver;
     private Boolean playerOneTurn;
 
@@ -27,6 +32,7 @@ public class Game {
     public void initBoard(){
         this.movesPlayed = 0;
         this.gameOver = GameState.IN_PROGRESS;
+        this.wins = new int[] {0,0};
         this.playerOneTurn = true;
 
         this.board = new TileState[boardSize][boardSize];
@@ -46,7 +52,6 @@ public class Game {
                 } else {
                     board[row][col] = TileState.PLAYER_TWO;
                 }
-                movesPlayed++;
                 return board[row][col];
 
             default:
@@ -79,22 +84,25 @@ public class Game {
             // counts diagonal tiles owned by current player
             if(board[i][i] == player) { tileOwnerCount[2]++; }
             // counts reverse diagonal tiles owned by current player
-            if(board[i][(board.length)-1] == player) { tileOwnerCount[3]++; }
+            if(board[i][((board.length-1)-i)] == player) { tileOwnerCount[3]++; }
 
         }
 
+
         // check if player has enough tiles to win.
-        for(int count : tileOwnerCount) {
+        for(int i=0;i<tileOwnerCount.length;i++) {
             // check if anyone has won
-            if (count >= boardSize) {
+            if (tileOwnerCount[i] == boardSize) {
                 gameOver = (playerOneTurn) ? GameState.PLAYER_ONE_WIN : GameState.PLAYER_TWO_WIN;
+                return gameOver;
             }
         }
 
-        // otherwise check if there are still blank tiles remaining.
-        // if not = draw; if yes = still in progress.
-        if (!Arrays.asList(board).contains(TileState.BLANK)) {
-            gameOver = GameState.DRAW
+        // otherwise check how many moves were played
+        // if moves are n^n then it's a draw; else it's still in progress.
+
+        if (this.movesPlayed+1 == boardSize*boardSize) {
+            gameOver = GameState.DRAW;
 ;
         } else {
             gameOver = GameState.IN_PROGRESS;
@@ -102,6 +110,48 @@ public class Game {
 
         return gameOver;
 
+    }
+
+    public TileState getTile(int row, int col) {
+        return board[row][col];
+    }
+
+
+    public int nextMove(){
+        this.movesPlayed++;
+        this.playerOneTurn = !playerOneTurn;
+
+        return movesPlayed;
+
+    }
+
+
+
+    public HashMap<Integer, Integer[]> getWinningPlayerTiles() {
+        TileState winner = (gameOver == GameState.PLAYER_ONE_WIN) ?
+                TileState.PLAYER_ONE : TileState.PLAYER_TWO;
+        HashMap<Integer, Integer[]> winningTiles = new HashMap<>();
+        int index = 0;
+        for(int row=0;row<boardSize;row++){
+            for(int col=0;col<boardSize;col++){
+                if(board[row][col] == winner){
+                    winningTiles.put(index, new Integer[] {new Integer(row), new Integer(col)});
+                    index++;
+                }
+            }
+        }
+        return winningTiles;
+    }
+
+    public void resetBoard() {
+        for(int i=0;i<boardSize;i++) {
+            for(int j=0;j<boardSize;j++){
+                board[i][j] = TileState.BLANK;
+                movesPlayed = 0;
+                gameOver = GameState.IN_PROGRESS;
+                playerOneTurn = true;
+            }
+        }
     }
 
 

@@ -8,49 +8,62 @@
     tools:context=".MainActivity">
 
 
+
     <GridLayout
-        android:id="@+id/GameBoard"
+        android:id="@+id/gameBoard"
+        android:orientation="vertical"
         android:columnCount="3"
         android:rowCount="3"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_weight="1"
         android:layout_gravity="center"
-        android:layout_weight="1">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <include layout="@layout/gametile"
+            android:layout_height="100dp"
             android:layout_width="100dp"
-            android:layout_height="100dp" />
+            />
         <include layout="@layout/gametile"
+            android:layout_height="100dp"
             android:layout_width="100dp"
-            android:layout_height="100dp" />
+            />
         <include layout="@layout/gametile"
+            android:layout_height="100dp"
             android:layout_width="100dp"
-            android:layout_height="100dp" />
+            />
         <include layout="@layout/gametile"
+            android:layout_height="100dp"
             android:layout_width="100dp"
-            android:layout_height="100dp" />
-        <include layout="@layout/gametile"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
-        <include layout="@layout/gametile"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
-        <include layout="@layout/gametile"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
-        <include layout="@layout/gametile"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
-        <include layout="@layout/gametile"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
 
+            />
+        <include layout="@layout/gametile"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            />
+        <include layout="@layout/gametile"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            />
+        <include layout="@layout/gametile"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            />
+        <include layout="@layout/gametile"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            />
+        <include layout="@layout/gametile"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            />
 
     </GridLayout>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="reset"/>
+        android:text="reset"
+        android:id="@+id/resetBtn"/>
 
 </android.support.v7.widget.LinearLayoutCompat>
