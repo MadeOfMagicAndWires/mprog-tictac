@@ -2,7 +2,6 @@ package online.madeofmagicandwires.tictac;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -240,13 +239,13 @@ public class GameAndroid extends Game implements View.OnClickListener {
             int[] coords = tagToCoords(tile);
 
             if (getTile(coords[0], coords[1]) == winner) {
-                tile.setTextColor(Color.parseColor("#008000"));
+                tile.setTextColor(tile.getResources().getColor(R.color.darkGreen, null));
             } else {
-                tile.setTextColor(Color.BLACK);
+                tile.setTextColor(tile.getResources().getColor(R.color.black, null));
             }
 
         } else {
-            tile.setTextColor(Color.BLACK);
+            tile.setTextColor(tile.getResources().getColor(R.color.black, null));
         }
     }
 
@@ -256,11 +255,12 @@ public class GameAndroid extends Game implements View.OnClickListener {
      */
     public void resetBoard(GridLayout board) {
         super.resetBoard();
+
         // clean up the gridlayout board,
         for(int i=0;i<board.getChildCount();i++){
             Button tile = (Button) board.getChildAt(i);
             tile.setText("");
-            tile.setTextColor(Color.BLACK);
+            tile.setTextColor(board.getResources().getColor(R.color.black,  null));
             tile.setClickable(true);
         }
     }
