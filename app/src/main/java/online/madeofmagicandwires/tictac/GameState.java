@@ -1,5 +1,13 @@
 package online.madeofmagicandwires.tictac;
 
+/**
+ * GameState
+ * enum keeping track of the state of a game.
+ *
+ * @author  Joost Bremmer
+ * @version 1.0
+ */
+
 public enum GameState {
     IN_PROGRESS,
     PLAYER_ONE_WIN,
@@ -7,6 +15,9 @@ public enum GameState {
     DRAW;
 
     @Override
+    /**
+     * Returns a Human readable String representing the state of the current object.
+     */
     public String toString() {
         switch (this) {
             case IN_PROGRESS:
