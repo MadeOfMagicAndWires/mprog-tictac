@@ -316,10 +316,11 @@ public class Game implements Serializable {
     }
 
 
-    @Override
     /**
      * Returns a Human readable String representing the state of the current object.
+     * @return Human readable String representing the current instance.
      */
+    @Override
     public String toString() {
         return "Playing with a board of " + boardSize + "*" + boardSize+"." +
                 "We've played " + (wins[0] + wins[1]) + " Rounds." +
