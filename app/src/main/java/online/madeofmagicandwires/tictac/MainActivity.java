@@ -1,67 +1,90 @@
 package online.madeofmagicandwires.tictac;
 
-import android.os.PersistableBundle;
+import android.content.Context;
+import android.graphics.Point;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.GridLayout;
 
-import java.io.IOException;
-
-/**
- * Main and only activity of this app
- *
- * @author Joost Bremmer
- * @version 2.0
- */
 public class MainActivity extends AppCompatActivity {
 
-    /** GameAndroid instance **/
-    GameAndroid game;
+    /**
+     * OnClick Listener to manually reset the game board
+     */
+    public static class ResetOnClickListener implements View.OnClickListener {
+
+        private GameAdapter adapter;
+
+        /**
+         * Standard constructor
+         * @param adapter the GameAdapter linked to the current game
+         */
+        public ResetOnClickListener(GameAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+
+        /**
+         * Called when a view has been clicked. Resets the board of the Game Adapter
+         *
+         * @param v The view that was clicked.
+         */
+        @Override
+        public void onClick(View v) {
+            adapter.resetBoard();
+        }
+    }
+
+    public static final String GAME_BUNDLE_KEY = "game";
+
+    private static Game game;
+    private GameAdapter adapter;
 
     @Override
-    /**
-     * It's ya boi! Creates or recovers GameAndroid instance on Activity creation,
-     * then draws the board
-     *
-     * @see AppCompatActivity#onCreate(Bundle, PersistableBundle)
-     * @see GameAndroid#drawBoard(GridLayout)
-     *
-     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         if(savedInstanceState != null) {
-            game = (GameAndroid) savedInstanceState.getSerializable("game");
-
-        } else {
-            game = new GameAndroid(GameAndroid.DEFAULT_BOARD_SIZE);
+            game = (Game) savedInstanceState.getSerializable(GAME_BUNDLE_KEY);
+            if(game == null) {
+                game = new Game(3);
+            }
+        } else  {
+            game = new Game(3);
         }
 
-        // drawing board
-        Log.d("tictac", "drawing board ");
-        game.drawBoard((GridLayout) findViewById(R.id.gameBoard), this);
-
-        // Finally, set OnClickListener on the reset button to call GameAndroid#resetBoard()
-        findViewById(R.id.resetBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                game.resetBoard((GridLayout) findViewById(R.id.gameBoard));
+        RecyclerView grid = findViewById(R.id.gameBoard);
+        if(grid != null) {
+            if(adapter == null) {
+                adapter = new GameAdapter(this, game, R.layout.gametile);
             }
-        });
+            grid.setAdapter(adapter);
+            if(grid.getLayoutManager() == null)  {
+                GridLayoutManager gridManager = new GridLayoutManager(this, game.boardSize);
+                grid.setLayoutManager(gridManager);
+            }
+
+            // Add onClick
+            findViewById(R.id.resetBtn).setOnClickListener(new ResetOnClickListener(adapter));
+
+        } else {
+            Log.e("BoardGrid",
+                    "Could not find the board grid; please ensure there is a RecyclerView with the id R.id.gameBoard");
+        }
+
 
     }
 
     @Override
-    /**
-     * Saves GameAndroid instance on suspension. Also doesn't work
-     *
-     * @see AppCompatActivity#onSaveInstanceState(Bundle)
-     */
-    public void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("game", game);
+        outState.putSerializable(GAME_BUNDLE_KEY, game);
     }
 }
