@@ -1,8 +1,10 @@
 package online.madeofmagicandwires.tictac;
 
+import android.preference.Preference;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -12,4 +14,5 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
     }
+
 }

@@ -137,7 +137,11 @@ public class GameAdapter extends RecyclerView.Adapter<GameViewHolder> implements
     }
 
 
-
+    /**
+     *
+     * @param v
+     * @param gs
+     */
     private void showWin(View v, @NonNull GameState gs) {
         Log.d("Game Over!", gs.toString());
         Snackbar snackbar = Snackbar.make(v, gs.toString(), Snackbar.LENGTH_LONG).

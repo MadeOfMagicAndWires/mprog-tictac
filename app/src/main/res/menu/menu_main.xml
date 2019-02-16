@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_reset"
+        android:title="@string/menu_reset_title"
+        android:icon="@drawable/ic_reset"
+        app:iconTint="@android:color/white"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings_gear"
+        app:iconTint="@android:color/white"
+        android:title="@string/menu_settings_title"
+        app:showAsAction="ifRoom"
+        />
+</menu>

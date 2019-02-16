@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="boardSize"
+        android:title="@string/prefs_boardsize_title"
+        android:summary="@string/prefs_boardsize_summary"
+        android:defaultValue="3"
+        android:inputType="numberDecimal"
+        android:numeric="integer" />
+
+</PreferenceScreen>

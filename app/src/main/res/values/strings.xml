@@ -78,4 +78,10 @@
     <string name="pref_title_vibrate">Vibrate</string>
 
     <string name="hello_blank_fragment">Hello settings fragment</string>
+    <string name="prefs_boardsize_summary">The size of the gameboard.</string>
+    <string name="prefs_boardsize_title">Board Size</string>
+    <string name="menu_settings_title">Settings</string>
+    <string name="menu_reset_title">Reset</string>
+    <string name="no_recyclerview_error_msg">Could not find the board grid; please ensure there is a RecyclerView with the id R.id.gameBoard</string>
+    <string name="board_size_setting_not_valid_error_msg">Please make sure the Board Size Setting is a valid number</string>
 </resources>
