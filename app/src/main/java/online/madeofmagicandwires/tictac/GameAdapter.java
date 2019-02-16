@@ -16,6 +16,9 @@ public class GameAdapter extends RecyclerView.Adapter<GameViewHolder> implements
     /** the default tile layout file **/
     public static final @LayoutRes int DEFAULT_LAYOUT = R.layout.gametile;
 
+
+    private final int TILE_SIZE;
+
     /** game instance used to determine board state **/
     private Game mGame;
     /** inflates the layout file to be used **/
@@ -25,26 +28,41 @@ public class GameAdapter extends RecyclerView.Adapter<GameViewHolder> implements
 
 
     /**
-     * More specific constructor
+     * Most specific constructor
      * @param c Activity layout
+     * @param game game instance representing the current gamestate
+     * @param layoutFile layout file to be used
+     * @param parentWidth the total width of the parent (Recycler)view
+     */
+    public GameAdapter(@NonNull Context c, @NonNull Game game, @LayoutRes int layoutFile, int parentWidth) {
+        this.mGame = game;
+        this.inflater = LayoutInflater.from(c);
+        this.layout = layoutFile;
+        this.TILE_SIZE = (int) Math.floor(parentWidth / (double) game.boardSize);
+    }
+
+    /**
+     * Constructor leaving out the total pixel size of the parent (Recycler)View;
+     * will use {@link R.dimen#board_grid_min_size} as default fallback.
+     * @param c Context needed to retrieve a LayoutInflator
      * @param game game instance representing the current gamestate
      * @param layoutFile layout file to be used
      */
     public GameAdapter(@NonNull Context c, @NonNull Game game, @LayoutRes int layoutFile) {
-        this.mGame = game;
-        this.inflater = LayoutInflater.from(c);
-        this.layout = layoutFile;
+        this(c, game, layoutFile, c.getResources().getDimensionPixelSize(R.dimen.board_grid_min_size));
+
     }
 
     /**
-     * Standard constructor using the default gametile file as the layout
-     * @param c Activity context
+     * Constructor leaving out the layout xml and total pixel size of the parent (Recycler)View;
+     * will use {@link #DEFAULT_LAYOUT} and {@link R.dimen#board_grid_min_size} as default fallback
+     * @param c Context needed to retrieve a LayoutInflator
      * @param game game instance representing the current gamestate
-     * @see #DEFAULT_LAYOUT
      */
     public GameAdapter(@NonNull Context c, @NonNull Game game) {
-        this(c, game, DEFAULT_LAYOUT);
+        this(c, game, DEFAULT_LAYOUT, c.getResources().getDimensionPixelSize(R.dimen.board_grid_min_size));
     }
+
 
     @NonNull
     @Override
@@ -56,8 +74,14 @@ public class GameAdapter extends RecyclerView.Adapter<GameViewHolder> implements
 
     @Override
     public void onBindViewHolder(@NonNull GameViewHolder viewHolder, int i) {
+        // set the size of the tile based on how big the board is
+        int calculatedTileSize = (TILE_SIZE > viewHolder.tile.getMinWidth()) ? TILE_SIZE : viewHolder.tile.getMinWidth();
+        viewHolder.tile.setHeight(calculatedTileSize);
+        viewHolder.tile.setWidth(calculatedTileSize);
+
         // retrieve tile coordinates
         Point coords = getCoordinatesFromAdapterPosition(i);
+
 
         // set data according to tile
         viewHolder.setState(mGame.getTile(coords.y, coords.x));
@@ -136,9 +160,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameViewHolder> implements
         }
     }
 
-
     /**
-     *
+     * Visually shows who won the game
      * @param v
      * @param gs
      */

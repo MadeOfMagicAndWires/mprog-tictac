@@ -59,6 +59,69 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Update Game instance if the board size setting has changed.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int boardSize = -1;
+        if(prefs.contains("boardSize")) {
+            try {
+                // retrieve the board size setting and try to cast it to integer
+                String boardSizeSetting = prefs.getString("boardSize", "3");
+                if (boardSizeSetting != null) {
+                    Log.d("onResume", "boardSizeSetting is " + boardSizeSetting);
+                    boardSize = Integer.valueOf(boardSizeSetting);
+                }
+            } catch (NumberFormatException e) {
+                // if that can't be done, use default board size
+                Log.e("onResume", "could not retrieve boardSize from preferences");
+                boardSize = Game.DEFAULT_BOARD_SIZE;
+            } finally {
+                // create new game instance if game is not already present
+                // or if the board size setting has been changed and is a playable value
+                if(boardSize < Game.DEFAULT_BOARD_SIZE) {
+                    boardSize = Game.DEFAULT_BOARD_SIZE;
+                }
+                if(game == null) {
+                    game = new Game(boardSize);
+                } else if(game.boardSize != boardSize) {
+                    game = new Game(boardSize);
+                }
+            }
+        }
+
+        // draw board
+        drawBoard();
+    }
+
+    /**
+     * Draws the new state of the recyclerview game board.
+     * @see #onCreate(Bundle)
+     */
+    public void drawBoard(){
+        RecyclerView grid = findViewById(R.id.gameBoard);
+
+        if(grid != null) {
+            // we're using mimimum width because the width of the recyclerview is only calculated once the adapter is set.
+            GameAdapter adapter = new GameAdapter(this, game, R.layout.gametile, grid.getMinimumWidth());
+
+            grid.setAdapter(adapter);
+            // TODO: use FixedGridLayoutManager
+            GridLayoutManager gridManager = new GridLayoutManager(this, game.boardSize);
+            grid.setLayoutManager(gridManager);
+
+
+            // Add onClick
+            findViewById(R.id.resetBtn).setOnClickListener(new ResetOnClickListener(adapter));
+
+        } else {
+            Log.e("BoardGrid",
+                    getString(R.string.no_recyclerview_error_msg));
+        }
+    }
+
     /**
      * Creates the actionbar menu with the reset and settings action
      * @param menu supportActionBar instance to add items to
@@ -100,73 +163,6 @@ public class MainActivity extends AppCompatActivity {
     public void startSettingsActivity() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
-    }
-
-    /**
-     * Updates the game instance if the Board Size setting has changed and draws the board
-     *
-     * @see #drawBoard()
-     * @see SharedPreferences
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        //Update Game instance if the board size setting has changed.
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Integer boardSize = -1;
-        if(prefs.contains("boardSize")) {
-            try {
-                // retrieve the board size setting and try to cast it to integer
-                String boardSizeSetting = prefs.getString("boardSize", "3");
-                if (boardSizeSetting != null) {
-                    Log.d("onResume", "boardSizeSetting is " + boardSizeSetting);
-                    boardSize = Integer.valueOf(boardSizeSetting);
-                }
-            } catch (NumberFormatException e) {
-                // if that can't be done, use default board size
-                Log.e("onResume", "could not retrieve boardSize from preferences");
-                boardSize = Game.DEFAULT_BOARD_SIZE;
-            } finally {
-                // create new game instance if game is not already present
-                // or if the board size setting has been changed and is a playable value
-                if(boardSize < Game.DEFAULT_BOARD_SIZE) {
-                    boardSize = Game.DEFAULT_BOARD_SIZE;
-                }
-                if(game == null) {
-                    game = new Game(boardSize);
-                } else if(game.boardSize != boardSize) {
-                    game = new Game(boardSize);
-                }
-            }
-        }
-
-        // draw board
-        drawBoard();
-    }
-
-    /**
-     * Draws the new state of the recyclerview game board.
-     * @see #onResume()
-     */
-    public void drawBoard(){
-        RecyclerView grid = findViewById(R.id.gameBoard);
-
-        if(grid != null) {
-            GameAdapter adapter = new GameAdapter(this, game, R.layout.gametile);
-            grid.setAdapter(adapter);
-            // TODO: use FixedGridLayoutManager
-            GridLayoutManager gridManager = new GridLayoutManager(this, game.boardSize);
-            grid.setLayoutManager(gridManager);
-
-
-            // Add onClick
-            findViewById(R.id.resetBtn).setOnClickListener(new ResetOnClickListener(adapter));
-
-        } else {
-            Log.e("BoardGrid",
-                    getString(R.string.no_recyclerview_error_msg));
-        }
     }
 
 

@@ -84,4 +84,5 @@
     <string name="menu_reset_title">Reset</string>
     <string name="no_recyclerview_error_msg">Could not find the board grid; please ensure there is a RecyclerView with the id R.id.gameBoard</string>
     <string name="board_size_setting_not_valid_error_msg">Please make sure the Board Size Setting is a valid number</string>
+    <string name="reset_btn">reset</string>
 </resources>
