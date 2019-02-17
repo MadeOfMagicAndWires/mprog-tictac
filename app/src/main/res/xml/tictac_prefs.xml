@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreference
+        android:key="tictacMode"
+        android:title="Connect Four Ruleset"
+        android:summary="Require only a line of 4 tiles to win boards larger than 4 cubic tiles."
+
+        android:defaultValue="false"
+
+        />
+
+    <online.madeofmagicandwires.tictac.BoardSizePreference
+        android:key="boardSize"
+        android:title="Board Size"
+        android:summary="The cubic size of the game board."
+        android:dialogTitle="Please select the size of the grid."
+        android:negativeButtonText="Cancel"
+        android:positiveButtonText="Accept"
+
+        app:maxValue="9"
+        app:minValue="3"
+        app:defaultValue="3" />
+
+
+
 
     <EditTextPreference
-        android:key="boardSize"
+        android:key="boardSizeString"
         android:title="@string/prefs_boardsize_title"
         android:summary="@string/prefs_boardsize_summary"
         android:defaultValue="3"
-        android:inputType="numberDecimal"
+        android:inputType="number"
         android:numeric="integer" />
 
 </PreferenceScreen>
