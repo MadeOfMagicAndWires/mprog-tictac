@@ -1,5 +1,7 @@
 package online.madeofmagicandwires.tictac;
 
+import android.support.annotation.NonNull;
+
 /**
  * GameState
  * enum keeping track of the state of a game.
@@ -14,10 +16,11 @@ public enum GameState {
     PLAYER_TWO_WIN,
     DRAW;
 
-    @Override
     /**
      * Returns a Human readable String representing the state of the current object.
+     * @return a human readable string representing the state of this instance
      */
+    @Override
     public String toString() {
         switch (this) {
             case IN_PROGRESS:
@@ -28,7 +31,8 @@ public enum GameState {
                 return "Player One won.";
             case PLAYER_TWO_WIN:
                 return "Player Two won.";
+                default:
+                    return "Unknown.";
         }
-        return null;
     }
 }
