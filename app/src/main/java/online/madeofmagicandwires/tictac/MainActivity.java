@@ -16,7 +16,7 @@ import android.view.MenuItem;
 /**
  * Activity used to play a game of tic-tac-toe or Connect Fours
  */
-public class MainActivity extends AppCompatActivity implements GameAdapter.OnGameOverListener {
+public class MainActivity extends AppCompatActivity implements GameAdapter.OnGameOverListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     /**
      * The key to use when storing and getting a Game object from a Bundle
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements GameAdapter.OnGam
      * @see #onCreate(Bundle)
      * @see #onRestoreInstanceState(Bundle)
      **/
-    public static final String GAME_BUNDLE_KEY = "game";
+    private static final String GAME_BUNDLE_KEY = "game";
 
     /** game instance to use in this activity **/
     private Game game;
@@ -33,6 +33,11 @@ public class MainActivity extends AppCompatActivity implements GameAdapter.OnGam
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //set default preferences if they are not available already and add onEventListener
+        PreferenceManager.setDefaultValues(this, R.xml.tictac_prefs, false);
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
 
         // try to get game from previously saved state
         if(savedInstanceState != null) {
@@ -44,35 +49,19 @@ public class MainActivity extends AppCompatActivity implements GameAdapter.OnGam
     @Override
     protected void onResume() {
         super.onResume();
-        //Update Game instance if the board size setting has changed.
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int boardSize = -1;
-        if(prefs.contains("boardSize")) {
-            try {
-                // retrieve the board size setting and try to cast it to integer
-                String boardSizeSetting = prefs.getString("boardSize", "3");
-                Log.d("onResume", "boardSizeSetting is " + boardSizeSetting);
-                //noinspection ConstantConditions
-                boardSize = Integer.valueOf(boardSizeSetting);
-            } catch (NumberFormatException e) {
-                // if that can't be done, use default board size
-                Log.e("onResume", "could not retrieve boardSize from preferences");
+
+        if(game == null) {
+            final int boardSize;
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if(prefs.contains(getString(R.string.prefs_board_size_key))) {
+                boardSize = prefs.getInt(getString(R.string.prefs_board_size_key), Game.DEFAULT_BOARD_SIZE);
+            } else  {
                 boardSize = Game.DEFAULT_BOARD_SIZE;
-            } finally {
-                // create new game instance if game is not already present
-                // or if the board size setting has been changed and is a playable value
-                if(boardSize < Game.DEFAULT_BOARD_SIZE) {
-                    boardSize = Game.DEFAULT_BOARD_SIZE;
-                }
-                if(game == null) {
-                    game = new Game(boardSize);
-                } else if(game.boardSize != boardSize) {
-                    game = new Game(boardSize);
-                }
             }
+            game = new Game(boardSize);
         }
 
-        // draw board
+        //draw board
         drawBoard();
     }
 
@@ -84,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements GameAdapter.OnGam
         RecyclerView grid = findViewById(R.id.gameBoard);
 
         if(grid != null) {
-            // we're using mimimum width because the width of the recyclerview is only calculated once the adapter is set.
+            // we're using minimum width because the width of the recyclerview is only calculated once the adapter is set.
             GameAdapter adapter = new GameAdapter(this, game, R.layout.gametile, grid.getMinimumWidth());
             adapter.setOnGameOverListener(this);
 
@@ -183,6 +172,28 @@ public class MainActivity extends AppCompatActivity implements GameAdapter.OnGam
             );
             // actually show snackbar
             snackbar.show();
+        }
+
+
+    }
+
+    /**
+     * Called when a shared preference is changed, added, or removed. This
+     * may be called even if a preference is set to its existing value.
+     *
+     * <p>This callback will be run on your main thread.
+     *
+     * @param sharedPreferences The {@link SharedPreferences} that received
+     *                          the change.
+     * @param key               The key of the preference that was changed, added, or
+     */
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        // if the board size is different just create a new game
+        if(key.equals(getString(R.string.prefs_board_size_key))) {
+            Log.d("onSharedPreferenceChanged", "changed " + key);
+            Log.d("onSharedPreferenceChanged", "new value is: " + sharedPreferences.getInt(key, 0));
+            game = new Game(sharedPreferences.getInt(key, 3));
         }
 
 

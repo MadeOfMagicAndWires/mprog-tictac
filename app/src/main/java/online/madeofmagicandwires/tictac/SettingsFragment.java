@@ -6,10 +6,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
-import android.widget.Toast;
 
+import java.util.Objects;
 
 /**
  * Basic PreferenceFragment containing the preferred game board size
@@ -18,15 +19,19 @@ import android.widget.Toast;
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
+    @SuppressWarnings("WeakerAccess")
+    public static final String DIALOG_FRAGMENT_TAG = "BoardSizePreferenceFragment";
 
     /**
      * On change listener for the 'boardSize' preference.
      */
+    @SuppressWarnings("WeakerAccess")
     public static class OnBoardSizeChangeListener implements Preference.OnPreferenceChangeListener {
 
 
-        private Context context;
+        private final Context context;
 
+        @SuppressWarnings("WeakerAccess")
         public OnBoardSizeChangeListener(@NonNull Context context) {
             this.context = context;
         }
@@ -42,30 +47,22 @@ public class SettingsFragment extends PreferenceFragmentCompat {
          */
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
-            if(preference.getKey().equals("boardSize")) {
-                Log.d("OnBoardSizeChangeListener", "changes made to boardSize");
-                if((newValue instanceof String) && ((String) newValue).matches("^\\d*") && Integer.valueOf((String)newValue) >= Game.DEFAULT_BOARD_SIZE) {
-                    Log.d("onBoardSizeChangeListener", "boardSize will now be " + ((String) newValue));
+            if (preference.getKey().equals(context.getString(R.string.prefs_board_size_key))) {
+                if (newValue instanceof Integer) {
+                    Log.d("OnBoardSizeChange", preference.getKey() + " changed");
                     if(context instanceof Activity) {
                         ((Activity) context).finish();
                     }
                     return true;
-                } else {
-                    Toast tst = Toast.makeText(
-                            context,
-                            context.getText(R.string.board_size_setting_not_valid_error_msg),
-                            Toast.LENGTH_LONG);
-                    tst.show();
                 }
             }
             return false;
         }
-
     }
 
 
     /**
-     * Inflates the preference values and adds a changelistener to the board size setting
+     * Inflates the preference values and adds a eventlistener to the board size setting
      *
      * @param bundle Bundle containing the fragments arguments.
      * @param s the key used for {@link #setPreferencesFromResource}
@@ -75,11 +72,37 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle bundle, String s) {
         setPreferencesFromResource(R.xml.tictac_prefs, s);
         if(isAdded()) {
-            getPreferenceManager().findPreference("boardSize")
+            getPreferenceManager().findPreference(getActivity().getString(R.string.prefs_board_size_key))
                     .setOnPreferenceChangeListener(new OnBoardSizeChangeListener(getContext()));
 
         }
     }
 
 
+
+    /**
+     * Called when a dialog preference requests a dialog view.
+     * @see "https://github.com/h6ah4i/android-numberpickerprefcompat"
+     * @param preference the preference object to use when creating a dialog
+     */
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        if(Objects.requireNonNull(getFragmentManager()).findFragmentByTag(DIALOG_FRAGMENT_TAG) != null) {
+            return;
+        }
+
+        final PreferenceDialogFragmentCompat fragment;
+        if(preference instanceof BoardSizePreference) {
+            fragment = BoardSizePreferenceFragment.newInstance(preference.getKey());
+        } else {
+            fragment = null;
+        }
+
+        if(fragment != null) {
+            fragment.setTargetFragment(this, 0);
+            fragment.show(getFragmentManager(), DIALOG_FRAGMENT_TAG);
+        } else  {
+            super.onDisplayPreferenceDialog(preference);
+        }
+    }
 }

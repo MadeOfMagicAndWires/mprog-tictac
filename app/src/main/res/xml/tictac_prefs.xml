@@ -5,34 +5,28 @@
 
     <SwitchPreference
         android:key="tictacMode"
-        android:title="Connect Four Ruleset"
+        android:title="Connect Four ruleset"
         android:summary="Require only a line of 4 tiles to win boards larger than 4 cubic tiles."
 
         android:defaultValue="false"
 
         />
 
+    <!--suppress AndroidElementNotAllowed -->
     <online.madeofmagicandwires.tictac.BoardSizePreference
-        android:key="boardSize"
-        android:title="Board Size"
-        android:summary="The cubic size of the game board."
+        android:key="@string/prefs_board_size_key"
+        android:title="@string/prefs_board_size_title"
+        android:summary="@string/prefs_board_size_summary"
         android:dialogTitle="Please select the size of the grid."
+        android:defaultValue="3"
+        android:dialogLayout="@layout/boardsizepreference"
         android:negativeButtonText="Cancel"
         android:positiveButtonText="Accept"
 
-        app:maxValue="9"
         app:minValue="3"
-        app:defaultValue="3" />
+        app:maxValue="9"
 
+        style="@style/Preference.Material"/>
 
-
-
-    <EditTextPreference
-        android:key="boardSizeString"
-        android:title="@string/prefs_boardsize_title"
-        android:summary="@string/prefs_boardsize_summary"
-        android:defaultValue="3"
-        android:inputType="number"
-        android:numeric="integer" />
 
 </PreferenceScreen>
