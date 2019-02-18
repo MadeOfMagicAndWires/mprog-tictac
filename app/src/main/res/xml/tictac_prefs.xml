@@ -4,13 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreference
-        android:key="tictacMode"
-        android:title="Connect Four ruleset"
-        android:summary="Require only a line of 4 tiles to win boards larger than 4 cubic tiles."
+        android:key="@string/prefs_game_ruleset_key"
+        android:title="@string/prefs_game_ruleset_title"
+        android:summary="@string/prefs_game_ruleset_summary"
 
         android:defaultValue="false"
-
-        />
+        android:enabled="false" />
 
     <!--suppress AndroidElementNotAllowed -->
     <online.madeofmagicandwires.tictac.BoardSizePreference
