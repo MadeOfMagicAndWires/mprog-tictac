@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 
 /**
+ * A preference used to represent the cubic board size setting of a tic tac toe game.
+ *
  * @see "https://github.com/h6ah4i/android-numberpickerprefcompat"
  */
 @SuppressWarnings("unused,WeakerAccess")
@@ -21,13 +23,17 @@ public class BoardSizePreference extends DialogPreference {
 
     private static final @LayoutRes int DEFAULT_LAYOUT = R.layout.boardsizepreference;
 
+    /** minimum value  of this preference **/
     private int minValue;
+    /** maximum value of this preference **/
     private int maxValue;
+    /** the default value of this preference **/
     private int defaultValue;
+    /** the current value of this preference **/
     private int currentValue;
 
+    /** Whether the current value has been set **/
     private boolean firstRun;
-
 
     /**
      * Most specific constructor
@@ -77,7 +83,6 @@ public class BoardSizePreference extends DialogPreference {
         this(c, attrs, defStyleAttr, 0);
     }
 
-
     /**
      * Constructor forgoing both the default style attributes and the default styleable attributes
      * @param c Context
@@ -87,40 +92,37 @@ public class BoardSizePreference extends DialogPreference {
         this(c, attrs, 0, 0);
     }
 
-
-
-
     /**
-     * Called when the default value is retrieved
-     * @param a typedarray containing this view's custom attributes
-     * @param index the index of the default value attribute
-     * @return int containing the board size's default value.
+     * Returns the default value of this preference
+     * @return an int representing the default value of this preference
      */
-    @NonNull
-    @Override
-    protected Object onGetDefaultValue(TypedArray a, int index) {
-        int persistentDefaultValue = a.getInt(index, 0);
-        this.defaultValue = persistentDefaultValue;
-        return persistentDefaultValue;
-
-    }
-
     public int getDefaultValue() {
         return this.defaultValue;
     }
 
+    /**
+     * Returns the minimum value of this preference
+     * @return an int representing the minimum value of this preference
+     */
     public  int getMinimumValue() {
         return this.minValue;
     }
 
+    /**
+     * Returns the maximum value of this preference
+     * @return an int representing the maximum value of this preference
+     */
     public int getMaximumValue() {
         return this.maxValue;
     }
 
+    /**
+     * Returns the current value of this preference
+     * @return an int representing the current value of this preference
+     */
     public int getValue() {
         return this.currentValue;
     }
-
 
     /**
      * Sets the current value of the preference
@@ -180,13 +182,29 @@ public class BoardSizePreference extends DialogPreference {
     }
 
     /**
-     *
+     * Called when the default value is retrieved
+     * @param a typedarray containing this view's custom attributes
+     * @param index the index of the default value attribute
+     * @return int containing the board size's default value.
+     */
+    @NonNull
+    @Override
+    protected Object onGetDefaultValue(TypedArray a, int index) {
+        int persistentDefaultValue = a.getInt(index, 0);
+        this.defaultValue = persistentDefaultValue;
+        return persistentDefaultValue;
+
+    }
+
+    /**
+     * Sets the initial value of this preference
      * @param defaultValue the default value of this preference
      */
     @Override
     protected void onSetInitialValue(@Nullable Object defaultValue) {
-        int initialValue = (defaultValue != null) ? (int) defaultValue : 0;
-        this.defaultValue = initialValue;
+        int initialValue = (defaultValue != null) ?
+                getPersistedInt((int) defaultValue) :
+                getPersistedInt(0);
         this.setValue(initialValue);
 
     }
