@@ -219,6 +219,11 @@ public class Game implements Serializable {
      */
     public GameState checkWinconditionReached(int row, int col) {
 
+        // too little moves played, win condition cannot have been reached yet
+        if(movesPlayed < (boardSize*2)-1) {
+            return GameState.IN_PROGRESS;
+        }
+
         /*
          * keeps a track of how many tiles are owned by the same player
          * tileOwnerCount[0] represents rows
@@ -240,7 +245,6 @@ public class Game implements Serializable {
             if(board[i][((board.length-1)-i)] == player) { tileOwnerCount[3]++; }
 
         }
-
 
         // check if player has enough tiles to win.
         for(int i=0;i<tileOwnerCount.length;i++) {
