@@ -59,7 +59,7 @@ public class Game implements Serializable {
      * Should not be called directly outside constructors.
      */
     private void initBoard(){
-        this.movesPlayed = 0;
+        this.movesPlayed = 1;
         this.gameOver = GameState.IN_PROGRESS;
         this.wins = new int[] {0,0};
         this.playerOneTurn = true;
@@ -219,6 +219,12 @@ public class Game implements Serializable {
      */
     public GameState checkWinconditionReached(int row, int col) {
 
+        // too little moves played, win condition cannot have been reached yet
+        // keep in mind that movesPlayed has not been updated at this point.
+        if(movesPlayed < ((boardSize*2)-2)) {
+            return GameState.IN_PROGRESS;
+        }
+
         /*
          * keeps a track of how many tiles are owned by the same player
          * tileOwnerCount[0] represents rows
@@ -241,7 +247,6 @@ public class Game implements Serializable {
 
         }
 
-
         // check if player has enough tiles to win.
         for(int i=0;i<tileOwnerCount.length;i++) {
             // check if anyone has won
@@ -258,7 +263,6 @@ public class Game implements Serializable {
 
         if (this.movesPlayed+1 == boardSize*boardSize) {
             gameOver = GameState.DRAW;
-;
         } else {
             gameOver = GameState.IN_PROGRESS;
         }
