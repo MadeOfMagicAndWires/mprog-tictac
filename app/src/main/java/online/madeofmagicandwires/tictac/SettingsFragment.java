@@ -60,7 +60,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
     }
 
-
     /**
      * Inflates the preference values and adds a eventlistener to the board size setting
      *
